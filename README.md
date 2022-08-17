@@ -38,7 +38,9 @@ __Prédiction des mouvements en boucle :__
 
 -	Affichage : `env.render()`
 
-    
+
+    ![ezgif com-gif-maker (8)](https://user-images.githubusercontent.com/92324336/185174735-725cb864-4a97-4905-99cc-9c7bcfd0e44f.gif)
+
 # II- OpenAi Box2D CarRacing :
 
 __Objectif__ : Une voiture doit rester sur le circuit en roulant
@@ -73,6 +75,8 @@ __Prédiction des mouvements en boucle :__
 -	Prédiction action à faire en fonction de l’image d’observation : `action, _states = model.predict(obs)`
 
 -	Réalisation de l’action : `obs, rewards, done, info = env.step(action)`
+
+![ezgif com-gif-maker (9)](https://user-images.githubusercontent.com/92324336/185174773-7e757eb5-2bef-45d0-8e84-d864eaa1b787.gif)
 
 
 # III- OpenAi Atari Breakout :
@@ -109,6 +113,7 @@ __Prédiction des mouvements en boucle :__
 
 -	Réalisation de l’action : `obs, rewards, done, info = env.step(action)`
  
+![ezgif com-gif-maker (10)](https://user-images.githubusercontent.com/92324336/185174812-4bec0bc8-10f5-46eb-919d-249a505c7478.gif)
 
 
 # IV- OpenAi Retro MortalKombat :

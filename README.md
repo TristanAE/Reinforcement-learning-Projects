@@ -140,7 +140,7 @@ __Mise en place de l’environnement :__
 - Initialisation de la classe MortalKombat(), on indique :
   - Observation_space image donc box avec pixel plus bas et plus haut, et sa shape: `self.observation_space = Box(low=0, high=255, shape=(150, 214, 1), dtype=np.uint8)`
   - Action_space : `self.action_space = MultiBinary(12)`
-  - Démarrage du jeu avec actions filtrées : `self.game = retro.make (game='SonicAndKnuckles-Genesis',   use_restricted_actions = retro.Actions.FILTERED)`
+  - Démarrage du jeu avec actions filtrées : `self.game = retro.make (game='MortalKombatII-Genesis',   use_restricted_actions = retro.Actions.FILTERED)`
 
 - 1ère méthode, reset(self) :
   - On obtient la 1ère frame :  `obs = self.game.reset()`
@@ -158,7 +158,7 @@ __Mise en place de l’environnement :__
       
         		`if healthEnemypreced>info["enemy_health"]:
           
-            			r=15
+            			h=15
                
         		if health>info["health"]:
           

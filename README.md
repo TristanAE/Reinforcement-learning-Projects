@@ -4,7 +4,7 @@ Jeux et simulations apprentissage par renforcement
 Nous utiliserons la bibliothèque Stable-baselines3 pour effectuer un apprentissage par renforcement des différentes simulations.
 Pour simplifier et gagner du temps, nous n’utiliserons pas la bibliothèque Optuna, bien qu’optimiser les hyperparamètres de nos algorithmes serait beaucoup plus efficace.
 
-# I-OpenAi classic control CartPole :
+# I-Gym classic control CartPole :
 
  __Objectif__: Un poteau doit tenir en équilibre sur un chariot mobile
 
@@ -41,7 +41,7 @@ __Prédiction des mouvements en boucle :__
 
     ![ezgif com-gif-maker (8)](https://user-images.githubusercontent.com/92324336/185174735-725cb864-4a97-4905-99cc-9c7bcfd0e44f.gif)
 
-# II- OpenAi Box2D CarRacing :
+# II- Gym Box2D CarRacing :
 
 __Objectif__ : Une voiture doit rester sur le circuit en roulant
 
@@ -79,7 +79,7 @@ __Prédiction des mouvements en boucle :__
 ![ezgif com-gif-maker (9)](https://user-images.githubusercontent.com/92324336/185174773-7e757eb5-2bef-45d0-8e84-d864eaa1b787.gif)
 
 
-# III- OpenAi Atari Breakout :
+# III- Gym Atari Breakout :
 
 __Objectif__ : Casser des briques avec un slider
 
@@ -116,7 +116,7 @@ __Prédiction des mouvements en boucle :__
 ![ezgif com-gif-maker (10)](https://user-images.githubusercontent.com/92324336/185174812-4bec0bc8-10f5-46eb-919d-249a505c7478.gif)
 
 
-# IV- OpenAi Retro MortalKombat :
+# IV- Gym Retro MortalKombat :
 
 __Objectif__ : Battre son adversaire
 

@@ -263,6 +263,7 @@ __Mise en place de l’environnement :__
         
             return 0
 
+![ezgif com-gif-maker (13)](https://user-images.githubusercontent.com/92324336/187224102-776e5e74-7192-44ab-97f7-9fecf4b00e59.gif)
 
  
 

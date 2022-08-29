@@ -205,102 +205,67 @@ __Reward__ : Récompense que l’on choisira soit +5 si touche noire ou +1 à ch
 
 __Mise en place de l’environnement :__
 
+- Initialisation de la classe PianoTiles(), on indique :
+  - Observation_space : `self.observation_space = Box(low=0, high=255, shape=(80, 960, 1), dtype=np.uint8)`
+  - Action_space : `self.action_space = Discrete(5)`
+  - Reward_range : `self.reward_range=(0,5)`
+  - Les dictionnaires des differents endroits importants du jeu pour mss :
+  
+ `self.ScreenGamePos = {"top": 880, "left": 50, "width": 1800, "height": 150}`
+  
+ `self.ScreenScore={"top": 80, "left": 780, "width": 350, "height": 150}`
 
+- 1ère méthode, reset(self) :
+  - On attend que le Game Over s'affiche entierement :  `time.sleep(2)`
+  - On clique sur les boutons pour relancer une partie : `mouse.click(pynput.mouse.Button.left, 1)`
+  - On retoune la 1ère frame du jeu issu de preprocess()
+  
+- 2ème méthode, preprocess(self):
+  - On récupère l’image par des captures d'écran : `raw = np.array(self.sct.grab(self.ScreenGamePos))`
+  - On change en noir et blanc pour 1 channel :   `gray = cv2.cvtColor(observation, cv2.COLOR_BGR2GRAY)`
+  - On change la taille de l’image : `resize = cv2.resize(gray,  (960,80))`
+  - On indique à nouveau que notre image a 3 dimensions avec 1 channel et on retourne : `channels = np.reshape(resize,  (80,960,1))`    
+    
+- 3ème méthode, step(self, action):
+  - On effectue une action avec pynput en fonction de la valeur de l'action : 4 actions de clics selon la case et ne rien faire
+  - On regarde si la partie est terminée :  `done, done_cap = self.get_done()`
+  - On fournit la récompense : `reward= 1 + self.get_score()`
+  - On récupère image de l'environnement : `observation = self.preprocess()`
 
-        self.observation_space = Box(low=0, high=255, shape=(80,960,1), dtype=np.uint8)
-        self.action_space = Discrete(5)
-        self.reward_range=(0,5)
-
-
-Dictionnaire pour la bibliotèque mss qui permet de cadrer la capture d écran. Nous avons besoin d’une capture de jeu, du game Over et parfois du score. Dans notre cas, la capture du score fait les 2
-self.ScreenGamePos = {"top": 880, "left": 50, "width": 1800, "height": 150}
-       self.ScreenScore={"top": 80, "left": 780, "width": 350, "height": 150}
-
-    def step(self, action):
-
-
-Méthode principale où nous devons faire un mouvement, observer l’environnement, donner une récompe et voir si le jeu est fini
-
-On fait un mouvement :
-        if action==0:
-            mouse.position = (200, 950)
-            mouse.click(pynput.mouse.Button.left, 1)
-
-        
-On regarde si le jeu est terminé
-        done, done_cap = self.get_done()
-
-On fournit une récompense
-        reward= 1 + self.get_score()
-
-On observe les captures d’écran
-        observation = self.get_observationNPreprocess()
-
-        info = {}
-        return observation, reward, done, info
-
-    def reset(self):
-
-On attend que l’écran GameOver finisse de s’afficher puis on clique sur nouvelle partie
-        time.sleep(2)
-        mouse.position = (800, 980)
-        mouse.click(pynput.mouse.Button.left, 1)
-        time.sleep(1.85)
-
-        return self.get_observationNPreprocess()
-
-
-    def get_observationNPreprocess(self):
-
-On récupère l’image de nos captures d’écran que l’on traite pour les alléger.
-Mss fournit 4 channel donc on remet à 3 puis on met en noir et blanc et on réduit.
-On met dans un tableau numpy pour rendre compatible opencv
-        raw = np.array(self.sct.grab(self.ScreenGamePos))[:,:,:3].astype(np.uint8)
-        gray = cv2.cvtColor(raw, cv2.COLOR_BGR2GRAY)
-        resized = cv2.resize(gray, (960,80))
-        channel = np.reshape(resized, (80,960,1))
-
-        return channel
-
-    def get_done(self):
-
-       
-On récupère image du jeu et on filtre pour n’avoir que la couleur rouge correspondant à une mauvaise touche. La couleur filtrée est de couleur jaune avec le mode HSV mais on peut utiliser le code « choix couleur » pour trouver le bon intervalle.
-On n’utilise pas pytesseract sur le texte de GameOver pour gagner en rapidité
-        sct_img = np.array(self.sct.grab(self.ScreenGamePos))
-        frame = cv2.cvtColor(sct_img, cv2.COLOR_BGR2HSV)
-        frame = cv2.inRange(frame, lo, hi)
-        color = cv2.findContours(frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-
-     Si du rouge est detecté, on met done=True pour reset la partie
-        if len(color) > 0 :
-            c = max(color, key=cv2.contourArea)
-            ((x1, y1), radius1) = cv2.minEnclosingCircle(c)
-            if radius1 > 10:
-                done=True
-
-        return done, sct_img
-
-    def get_score(self):
-
-      
-Pour avoir une bonne récompense, on va lui indiquer le score de chacune des ses actions. On utilise pytesseract en filtrant pour isoler la couleur rouge des chiffres.
-        sct_img = np.array(self.sct.grab(self.ScreenScore))
-        frame = cv2.cvtColor(sct_img, cv2.COLOR_BGR2HSV)
-        frame = cv2.inRange(frame, lo, hi)
-        resized = cv2.resize(frame, (186, 80))
-        string = pytesseract.image_to_string(resized, config='--psm 6')
-
-On int le chiffre reçu si possible
-        try:
-            number=int(string)
-        except:
-            number=self.numberpreced
-
-Si le score est modifié le reward vaut 5 sinon 1 pour chaque frame 
-        if number!=self.numberpreced:
+- 4ème  méthode, get_done(self) :
+  - On filtre la couleur du jeu pour ne voir que le rouge lorsqu'une case est incorrecte. On évite d'utiliser pytesseract 2 fois pour ne pas ralentir le programme : 
+ 
+ `frame = cv2.inRange(frame, lo, hi)`
+ 
+ `color = cv2.findContours(frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]`
+ 
+  `if len(color) > 0 :`
+  
+         c = max(color, key=cv2.contourArea)
+            
+         ((x1, y1), radius1) = cv2.minEnclosingCircle(c)
+            
+          if radius1 > 10:
+            
+              done=True
+                
+- 5ème méthode,  get_score(self)) : 
+   - Le reward sera le score affiché. On filtre capture score pour ne voir que le chiffre rouge et on réduit image.
+   - On utilise pytesseract : `string = pytesseract.image_to_string(resized, config='--psm 6')`
+   - On tranforme si possible la chaine en entier et on le compare avec le chiffre lu précédemment pour savoir si le score a changé
+   
+  `if number!=self.numberpreced:`
+   
             self.numberpreced = number
+            
             return 4
         else:
-            self.numberpreced = number
+        
             return 0
+
+
+ 
+
+    
+  
+       
